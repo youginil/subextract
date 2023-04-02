@@ -1,6 +1,6 @@
 # subextract
 
-Some scripts for extracting subtitle (hard-encoded) from video
+Extracting subtitle (hard-encoded) from video
 
 ## Requirements
 
@@ -40,3 +40,5 @@ The result maybe not accurate, you can correct it manually by subtitle editor, s
 ## TODO
 - Add more options to scripts
 - Add more OCR tools
+- https://github.com/tesseract-ocr/tesseract
+- https://github.com/gumblex/tessdata_chi
