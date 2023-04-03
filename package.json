@@ -1,0 +1,17 @@
+{
+  "name": "subextract",
+  "version": "1.0.0",
+  "description": "subtitle extractor",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "subtitle"
+  ],
+  "author": "youginil",
+  "license": "MIT",
+  "dependencies": {
+    "cli-progress": "^3.12.0",
+    "commander": "^10.0.0",
+    "tesseract.js": "^4.0.3"
+  }
+}
