@@ -7,7 +7,6 @@ Extracting subtitle (hard-encoded) from video
 - Python
 - ffmpeg and ffprobe
 - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) [Optional]
-- [Tesseract](https://github.com/tesseract-ocr/tesseract) [Optional]
 
 ## Post-recognization
 
