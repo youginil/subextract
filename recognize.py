@@ -1,11 +1,11 @@
 from rich.progress import track
 import os
 import argparse
-from typing import List, Callable
+from typing import List, Callable, Any
 
 
 def frame2ts(n, d):
-    ms = n * d
+    ms = d / 2 + (n - 1) * d
     h = int(ms / 1000 / 3600)
     ms -= h * 3600 * 1000
     m = int(ms / 1000 / 60)
@@ -24,33 +24,34 @@ def frame2ts(n, d):
     )
 
 
-def recognize(rec: Callable[[str], str]):
+def recognize(
+    add_args: Callable[[argparse.ArgumentParser], None],
+    get_args: Callable[[dict[str, Any]], None],
+    rec: Callable[[str], str],
+):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video", "-v", type=str, help="Video path", required=True)
     parser.add_argument(
         "--img_dir", "-d", type=str, help="Sceenshot directory", required=True
     )
+    parser.add_argument("--fps", type=str, help="Screenshot FPS", required=True)
+
+    add_args(parser)
 
     args = vars(parser.parse_args())
 
-    img_dir: str = args.get("img_dir")  # type: ignore
-    video: str = args.get("video")  # type: ignore
+    get_args(args)
 
-    output = os.popen(
-        "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {}".format(
-            video
-        )
-    )
-    duration = output.read()
-    duration = float(duration) * 1000
-    print("Duration: {}".format(duration))
+    img_dir: str = args.get("img_dir")  # type: ignore
+    fps: str = args.get("fps")  # type: ignore
+
+    frame_duration = 1000 / float(fps)
 
     imgs: List[str] = []
-    for item in filter(lambda x: str(x).endswith(".png"), os.listdir(img_dir)):
+    for item in filter(
+        lambda x: x[0] != "." and str(x).endswith(".png"), os.listdir(img_dir)
+    ):
         imgs.append(item)
     imgs.sort()
-
-    frame_duration = duration / len(imgs)
 
     subs: List[tuple[List[int], str]] = []
 
@@ -74,7 +75,7 @@ def recognize(rec: Callable[[str], str]):
         et = frame2ts(ids[-1], frame_duration)
         srt_items.append("\n".join([str(i + 1), st + " --> " + et, sentence]))
 
-    srt_dest = os.path.splitext(video)[0] + ".srt"
+    srt_dest = img_dir + ".srt"
 
     with open(srt_dest, "w") as fp:
         for item in srt_items:

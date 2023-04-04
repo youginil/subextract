@@ -5,7 +5,7 @@ import path from "path";
 import cliProgress from "cli-progress";
 
 function frame2ts(n, d) {
-  let ms = n * d;
+  let ms = d / 2 + (n - 1) * d;
   const h = Math.floor(ms / 1000 / 3600);
   ms -= h * 3600 * 1000;
   const m = Math.floor(ms / 1000 / 60);
@@ -39,27 +39,19 @@ function execCommand(cmd) {
 }
 
 program
-  .requiredOption("-v, --video <string>", "Video path")
-  .requiredOption("-d, --img_dir <string>", "Screenshot directory");
+  .requiredOption("-d, --img_dir <string>", "Screenshot directory")
+  .requiredOption("--fps <string>", "Screenshot FPS");
 
 export default async function recognize(rec) {
   program.parse();
   const options = program.opts();
-  const video = options.video;
-  const imgDir = options.img_dir;
-  if (!(await fs.stat(video)).isFile()) {
-    throw new Error("Invalid video");
+  const fps = +options.fps;
+  if (isNaN(fps) || fps <= 0) {
+    throw new Error("Invalid FPS");
   }
+  const imgDir = options.img_dir;
   if (!(await fs.stat(imgDir)).isDirectory()) {
     throw new Error("Invalid image directory");
-  }
-  const { stdout, stderr } = await execCommand(
-    `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${video}`
-  );
-  const duration = stdout * 1000;
-  if (isNaN(duration) || duration <= 0) {
-    console.error(stderr);
-    return;
   }
 
   const imgs = (await fs.readdir(imgDir))
@@ -86,7 +78,7 @@ export default async function recognize(rec) {
     }
   }
 
-  const frame_duration = duration / imgs.length;
+  const frame_duration = 1000 / fps;
 
   const sub_items = [];
   subs.forEach(({ ids, sentence }, idx) => {
@@ -95,13 +87,9 @@ export default async function recognize(rec) {
     sub_items.push(["" + idx, st + " --> " + et, sentence]);
   });
 
-  const video_name = path.basename(video);
-  const video_basename = video_name.substring(
-    0,
-    video_name.length - path.extname(video_name).length
-  );
-  const dest = path.resolve(path.dirname(video), video_basename + ".srt");
+  const dest = imgDir + ".srt";
 
   await fs.writeFile(dest, sub_items.join("\n\n"));
   console.log(`Save to ${dest}`);
 }
+
