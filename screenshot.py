@@ -6,7 +6,7 @@ from typing import Optional
 parser = argparse.ArgumentParser(description="Extract video frames")
 parser.add_argument("--input", "-i", type=str, help="Video path", required=True)
 parser.add_argument("--output", "-o", type=str, help="Output directory", required=True)
-parser.add_argument("--fps", type=str, help="Frames per second", default="10")
+parser.add_argument("--fps", type=str, help="Frames per second", default="5")
 parser.add_argument(
     "--crop",
     "-c",

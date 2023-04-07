@@ -24,17 +24,18 @@ def frame2ts(n, d):
     )
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--img_dir", "-d", type=str, help="Sceenshot directory", required=True
+)
+parser.add_argument("--fps", type=str, help="Screenshot FPS", required=True)
+
+
 def recognize(
     add_args: Callable[[argparse.ArgumentParser], None],
     get_args: Callable[[dict[str, Any]], None],
     rec: Callable[[str], str],
 ):
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--img_dir", "-d", type=str, help="Sceenshot directory", required=True
-    )
-    parser.add_argument("--fps", type=str, help="Screenshot FPS", required=True)
-
     add_args(parser)
 
     args = vars(parser.parse_args())
