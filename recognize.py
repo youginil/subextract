@@ -1,7 +1,7 @@
 from rich.progress import track
 import os
 import argparse
-from typing import List, Callable, Any
+from typing import List, Callable, Any, Dict, Tuple
 
 
 def frame2ts(n, d):
@@ -33,7 +33,7 @@ parser.add_argument("--fps", type=str, help="Screenshot FPS", required=True)
 
 def recognize(
     add_args: Callable[[argparse.ArgumentParser], None],
-    get_args: Callable[[dict[str, Any]], None],
+    get_args: Callable[[Dict[str, Any]], None],
     rec: Callable[[str], str],
 ):
     add_args(parser)
@@ -54,7 +54,7 @@ def recognize(
         imgs.append(item)
     imgs.sort()
 
-    subs: List[tuple[List[int], str]] = []
+    subs: List[Tuple[List[int], str]] = []
 
     for i in track(range(len(imgs))):
         file = os.path.join(img_dir, imgs[i])

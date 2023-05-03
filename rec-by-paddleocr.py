@@ -15,7 +15,7 @@ def add_args(parser: argparse.ArgumentParser):
         parser.add_argument("--" + k, type=str)
 
 
-def get_args(args: dict[str, Any]):
+def get_args(args: Dict[str, Any]):
     global ocr
     params: Dict[str, Any] = {
         "show_log": False,
