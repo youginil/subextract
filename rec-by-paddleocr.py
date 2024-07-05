@@ -32,7 +32,7 @@ def get_args(args: Dict[str, Any]):
 def rec(img: str):
     # todo 识别下一张图片相同的区域，如果不一致再整体识别。如果相同的区域一样，但区域外还有内容，那就识别错了
     result = ocr.ocr(img, cls=False)
-    if len(result) == 0 or len(result[0]) == 0:
+    if len(result) == 0 or result[0] is None or len(result[0]) == 0:
         return ""
     txts = [line[1][0] for line in result[0]]
     return "\n".join(txts)
